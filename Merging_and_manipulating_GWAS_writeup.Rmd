@@ -5,14 +5,15 @@ output:
     toc: true
 ---
 
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 # Introduction 
 This is a tutorial document to demonstrate how to make R Markdown writeups.
 
 # Script to manipulate GWAS data
-
-```perl
+```{perl, eval=F}
 #Before running, edit path names on lines 18 and 50 to the relevant input files.
 #Then run with 'perl Merge_rsIDs.pl'.
 #Output will be tab-delimited file named "Merged_rsIDs.txt' in working directory.
@@ -186,64 +187,13 @@ You can **bold** things .. you make them *italics*
 
 And you can add R code
 
-
-```r
+```{r}
 data(iris)
 head(iris)
-```
-
-```
-##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
-## 1          5.1         3.5          1.4         0.2  setosa
-## 2          4.9         3.0          1.4         0.2  setosa
-## 3          4.7         3.2          1.3         0.2  setosa
-## 4          4.6         3.1          1.5         0.2  setosa
-## 5          5.0         3.6          1.4         0.2  setosa
-## 6          5.4         3.9          1.7         0.4  setosa
-```
-
-```r
 knitr::kable(head(iris))
 ```
 
-
-
-| Sepal.Length| Sepal.Width| Petal.Length| Petal.Width|Species |
-|------------:|-----------:|------------:|-----------:|:-------|
-|          5.1|         3.5|          1.4|         0.2|setosa  |
-|          4.9|         3.0|          1.4|         0.2|setosa  |
-|          4.7|         3.2|          1.3|         0.2|setosa  |
-|          4.6|         3.1|          1.5|         0.2|setosa  |
-|          5.0|         3.6|          1.4|         0.2|setosa  |
-|          5.4|         3.9|          1.7|         0.4|setosa  |
-
 # Session info
-
-```r
+```{r}
 sessionInfo()
-```
-
-```
-## R version 3.4.1 (2017-06-30)
-## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-## Running under: macOS Sierra 10.12.6
-## 
-## Matrix products: default
-## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
-## 
-## locale:
-## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-## 
-## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
-## 
-## other attached packages:
-## [1] knitr_1.17
-## 
-## loaded via a namespace (and not attached):
-##  [1] compiler_3.4.1  backports_1.1.0 magrittr_1.5    rprojroot_1.2  
-##  [5] htmltools_0.3.6 tools_3.4.1     yaml_2.1.14     Rcpp_0.12.12   
-##  [9] stringi_1.1.5   rmarkdown_1.8   highr_0.6       stringr_1.2.0  
-## [13] digest_0.6.12   evaluate_0.10.1
 ```

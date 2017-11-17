@@ -1,0 +1,158 @@
+#Before running, edit path names on lines 18 and 50 to the relevant input files.
+#Then run with 'perl Merge_rsIDs.pl'.
+#Output will be tab-delimited file named "Merged_rsIDs.txt' in working directory.
+
+#! /usr/bin/perl
+use strict;
+use warnings;
+
+
+#Define 2 hashes to store information from files 1 and 2, respectively.
+#Hash keys will be joined SNPs (imputed) and rsID columns (first two columns in input files).
+#Associated values will be joins of all subsequent fields on the input line.
+my %file1hash;
+my %file2hash;
+
+if ($ARGV[0]) {
+	my $inputfile1 = $ARGV[0];
+}
+
+else {
+	print "No input file #1 included as command line argument.\n";
+	print "Command line should be...\n";
+	print "perl Merge_rsIDs.pl input_file1_name input_file2_name output_file_name\n";
+	exit;
+}
+
+if ($ARGV[1]) {
+	my $inputfile2 = $ARGV[1];
+}
+
+else {
+	print "No input file #2 included as command line argument.\n";
+	print "perl Merge_rsIDs.pl input_file1_name input_file2_name output_file_name\n";
+	exit;
+}
+
+if ($ARGV[2]) {
+	my $outputfile = $ARGV[2];
+}
+
+else {
+	print "No output file included as command line argument.\n";
+	print "perl Merge_rsIDs.pl input_file1_name input_file2_name output_file_name\n";
+	exit;
+}
+
+
+#Read through file 1 and populate the file 1 hash (store header).
+open FILE1, "$inputfile1" or die$!;
+my $line = 0;
+my $file1header;
+my $file1DataToPrint = 0;
+
+while(<FILE1>) {
+	if ($line == 0) {
+		$line++;
+		$file1header = $_;
+		$file1header =~ s/\s+/\t/g;
+		next;
+	}	
+	chomp($_);
+	my @TempArray = split(/\s+/ , $_);
+	my $joinedname = $TempArray[0]."\t".$TempArray[1];
+	my $ArrayLength = @TempArray;
+	if ($ArrayLength > 2) {
+		my $restofarray = join("\t",@TempArray[2..$ArrayLength-1]);
+		$file1hash{$joinedname} = $restofarray;
+		$file1DataToPrint = 1;
+	}
+
+	else {
+		$file1hash{$joinedname} = "NA";
+		
+	}	
+}
+
+close FILE1;
+	
+
+#Read through file 2 and populate the file 2 hash (store header).
+open FILE2, "$inputfile2" or die$!;
+
+$line = 0;
+my $file2header;
+my $editedfile2header;
+my $file2DataToPrint = 0;
+
+while(<FILE2>) {
+	if ($line == 0) {
+		$line++;
+		$file2header = $_;
+		$file2header =~ s/\s+/\t/g;
+		next;
+	}	
+	chomp($_);
+	my @TempArray = split(/\s+/ , $_);
+	my $joinedname = $TempArray[0]."\t".$TempArray[1];
+	my $ArrayLength = @TempArray;
+	if ($ArrayLength > 2) {
+		my $restofarray = join("\t",@TempArray[2..$ArrayLength-1]);
+		$file2hash{$joinedname} = $restofarray;
+		$file2DataToPrint = 1;
+	}
+
+	else {
+		$file1hash{$joinedname} = "NA";
+		
+	}
+	
+}
+
+close FILE2;
+
+#create the output file
+open MERGED, ">$outputfile" or die$!;
+
+#print the header to the output file.
+#Have to get rid of the repeated column names first.
+my @TempHeader2 = split(/\t/, $file2header);
+shift @TempHeader2;
+shift @TempHeader2;
+$editedfile2header = join("\t", @TempHeader2);		
+
+print MERGED "$file1header\t$editedfile2header\n";
+
+
+#Go through each key from hash 1 (file 1 joined SNP names) and check to see if that joined name occurs in hash 2.
+#If there's a match, print the non-redundant information from the two files (hash key and its values from both hashes) to output file.
+#Might need updated if both files only contained the first two columns - assuming this wouldn't ever happen?
+
+for (keys %file1hash) {
+	if ($file2hash{$_}) {
+		my $joinedrsIDinfo;
+		
+		if ($file1DataToPrint == 0)  {
+			$joinedrsIDinfo = $_."\t".$file2hash{$_};
+			print MERGED "$joinedrsIDinfo\n";
+		}
+		
+		elsif ($file1DataToPrint == 0) {
+			$joinedrsIDinfo = $_."\t".$file1hash{$_};
+			print MERGED "$joinedrsIDinfo\n";
+		}
+		
+		else {
+		
+			$joinedrsIDinfo = $_."\t".$file1hash{$_}."\t".$file2hash{$_};
+			print MERGED "$joinedrsIDinfo\n";
+		}
+		
+	}
+}
+
+close MERGED;
+
+
+
+
